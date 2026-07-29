@@ -6,35 +6,35 @@ abstracting away the details of communicating with the various HPCs,
 with a focus on EuropHPC.
 """
 
-from weathergen.prefect_dags.cmd_runners._cineca import (
+from hpc_relay.cmd_runners._cineca import (
     CinecaCommandRunner,
     CinecaHpc,
     CinecaSshContext,
 )
-from weathergen.prefect_dags.cmd_runners._cscs_firecrest import (
+from hpc_relay.cmd_runners._cscs_firecrest import (
     CscsFirecrestCommandRunner,
     CscsFirecrestContext,
     CscsHpc,
 )
-from weathergen.prefect_dags.cmd_runners._ecmwf_ecaccess import (
+from hpc_relay.cmd_runners._ecmwf_ecaccess import (
     EcmwfEcaccessCommandRunner,
     EcmwfEcaccessContext,
 )
-from weathergen.prefect_dags.cmd_runners._exec_cmd import (
+from hpc_relay.cmd_runners._exec_cmd import (
     CmdContext,
     get_command_runner,
     run_cmd,
     slurm_account,
 )
-from weathergen.prefect_dags.cmd_runners._generic import GenericContext, GenericSshCommandRunner
-from weathergen.prefect_dags.cmd_runners._jsc import (
+from hpc_relay.cmd_runners._generic import GenericContext, GenericSshCommandRunner
+from hpc_relay.cmd_runners._jsc import (
     JscHpc,
     JscUnicoreCommandRunner,
     JscUnicoreContext,
 )
-from weathergen.prefect_dags.cmd_runners._local import LocalCommandRunner, LocalContext
-from weathergen.prefect_dags.cmd_runners._simple import SimpleSshCommandRunner, SimpleSshContext
-from weathergen.prefect_dags.cmd_runners._types import Command, CommandResult, CommandRunner
+from hpc_relay.cmd_runners._local import LocalCommandRunner, LocalContext
+from hpc_relay.cmd_runners._simple import SimpleSshCommandRunner, SimpleSshContext
+from hpc_relay.cmd_runners._types import Command, CommandResult, CommandRunner
 
 __all__ = [
     "Command",

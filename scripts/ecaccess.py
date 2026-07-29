@@ -12,7 +12,7 @@
 """
 CLI entry point for the ECMWF ECaccess SOAP client.
 
-All client logic lives in weathergen.prefect_dags.cmd_runners.ecmwd_ecaccess_perl;
+All client logic lives in hpc_relay.cmd_runners.ecmwd_ecaccess_perl;
 this script is a thin uv-runnable wrapper so the same code path is used both
 from this CLI and from any other caller in the package.
 
@@ -60,7 +60,7 @@ from __future__ import annotations
 
 import sys
 
-from weathergen.prefect_dags.cmd_runners.ecmwf_ecaccess_perl import main
+from hpc_relay.cmd_runners.ecmwf_ecaccess_perl import main
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -27,13 +27,13 @@ from typing import Any, Literal
 import pyunicore.client as uc_client
 import pyunicore.credentials as uc_credentials
 
-from weathergen.prefect_dags.cmd_runners._types import (
+from hpc_relay.cmd_runners._types import (
     Command,
     CommandResult,
     CommandRunner,
     quote_path,
 )
-from weathergen.prefect_dags.result import OpError, Result
+from hpc_relay.result import OpError, Result
 
 type JscHpc = Literal["jupiter", "jureca", "juwels"]
 

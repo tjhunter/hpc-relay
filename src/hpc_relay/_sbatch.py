@@ -49,17 +49,17 @@ from prefect.utilities.asyncutils import run_coro_as_sync
 from prefect.variables import Variable
 from pydantic import TypeAdapter, ValidationError
 
-from weathergen.prefect_dags.cmd_runners import (
+from hpc_relay.cmd_runners import (
     CmdContext,
     Command,
     CommandRunner,
     get_command_runner,
     run_cmd,
 )
-from weathergen.prefect_dags.prefect import get_run_logger, task
-from weathergen.prefect_dags.result import OpError, Result, is_err
-from weathergen.prefect_dags.run import get_head_tail_logs
-from weathergen.prefect_dags.slurm import (
+from hpc_relay.prefect import get_run_logger, task
+from hpc_relay.result import OpError, Result, is_err
+from hpc_relay.run import get_head_tail_logs
+from hpc_relay.slurm import (
     SlurmJob,
     SlurmJobId,
     SlurmJobState,

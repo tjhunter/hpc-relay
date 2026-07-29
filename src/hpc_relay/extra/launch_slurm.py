@@ -9,22 +9,22 @@ import prefect.runtime.task_run
 from prefect.artifacts import acreate_markdown_artifact
 from prefect.utilities.asyncutils import run_coro_as_sync
 
-from weathergen.prefect_dags._sbatch import (
+from hpc_relay._sbatch import (
     SlurmJobResult,
     _artifact_key_part,
     _format_output_section,
     wait_completion_single,
 )
-from weathergen.prefect_dags.cmd_runners import (
+from hpc_relay.cmd_runners import (
     CmdContext,
     Command,
     get_command_runner,
     run_cmd,
 )
-from weathergen.prefect_dags.prefect import get_run_logger, task
-from weathergen.prefect_dags.result import OpError, Result, is_err
-from weathergen.prefect_dags.run import get_head_tail_logs
-from weathergen.prefect_dags.slurm import SlurmJobId, SlurmSubmissionResult
+from hpc_relay.prefect import get_run_logger, task
+from hpc_relay.result import OpError, Result, is_err
+from hpc_relay.run import get_head_tail_logs
+from hpc_relay.slurm import SlurmJobId, SlurmSubmissionResult
 
 _logger = logging.getLogger(__name__)
 

@@ -19,18 +19,18 @@ from dataclasses import dataclass
 from logging import Logger
 from pathlib import Path
 
-from weathergen.prefect_dags.cmd_runners._types import (
+from hpc_relay.cmd_runners._types import (
     Command,
     CommandResult,
     CommandRunner,
     quote_path,
 )
-from weathergen.prefect_dags.cmd_runners.ecmwf_ecaccess_perl import (
+from hpc_relay.cmd_runners.ecmwf_ecaccess_perl import (
     DEFAULT_CERT,
     DEFAULT_GATEWAY,
     ECaccessClient,
 )
-from weathergen.prefect_dags.result import OpError, Result
+from hpc_relay.result import OpError, Result
 
 # ECaccess job status values. INIT/WAIT/EXEC are non-terminal; DONE/STOP are.
 _TERMINAL_STATES = {"DONE", "STOP"}

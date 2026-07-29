@@ -16,6 +16,7 @@ import sys
 import textwrap
 import urllib.parse
 import xml.etree.ElementTree as ET
+from contextlib import suppress
 from pathlib import Path
 
 import httpx
@@ -301,10 +302,8 @@ class ECaccessClient:
 
     def release_token(self) -> None:
         if self._token:
-            try:
+            with suppress(Exception):
                 self._call("releaseToken", [("token", self._token, None)])
-            except Exception:
-                pass
             self._token = None
 
     # -- REST data I/O (ECaccess.pm lines 267-307) --------------------------
@@ -601,7 +600,7 @@ class ECaccessClient:
         job_id = _return_text(resp)
 
         # Step 4: cleanup temp file
-        try:
+        with suppress(Exception):
             self._call(
                 "deleteFile",
                 [
@@ -610,8 +609,6 @@ class ECaccessClient:
                     ("force", "true", "xsd:boolean"),
                 ],
             )
-        except Exception:
-            pass
 
         return job_id
 
@@ -673,10 +670,8 @@ class ECaccessClient:
         try:
             data = self._download_data(handle)
         finally:
-            try:
+            with suppress(Exception):
                 self._close_handle(handle)
-            except Exception:
-                pass
 
         return data
 
@@ -831,8 +826,8 @@ def main() -> int:
     cert_path = args.cert or Path(os.environ.get("ECCERT", str(DEFAULT_CERT)))
 
     # Resolve gateway hosts from env (matching ECaccess.pm lines 105-114)
-    https_host = os.environ.get("https_ecaccess", DEFAULT_GATEWAY)
-    http_host = os.environ.get("http_ecaccess", DEFAULT_GATEWAY)
+    https_host = os.environ.get("https_ecaccess", DEFAULT_GATEWAY) # noqa: SIM112
+    http_host = os.environ.get("http_ecaccess", DEFAULT_GATEWAY) # noqa: SIM112
 
     client = ECaccessClient(
         cert_path=cert_path,

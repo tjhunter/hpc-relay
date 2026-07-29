@@ -12,8 +12,8 @@
 # # When developing locally, swap the source above for the line below:
 # weathergen-prefect-dags = { path = "../", editable = true }
 # ///
-from weathergen.prefect_dags import SlurmJobResult, flow, run, sbatch, task
-from weathergen.prefect_dags.cmd_runners import (
+from hpc_relay import SlurmJobResult, flow, run, sbatch, task
+from hpc_relay.cmd_runners import (
     CscsFirecrestContext,
     # EcmwfEcaccessContext,
     JscUnicoreContext,

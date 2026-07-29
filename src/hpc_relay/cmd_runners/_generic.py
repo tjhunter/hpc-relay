@@ -18,13 +18,13 @@ from cryptography.hazmat.primitives.serialization import (
     load_ssh_private_key,
 )
 
-from weathergen.prefect_dags.cmd_runners._types import (
+from hpc_relay.cmd_runners._types import (
     Command,
     CommandResult,
     CommandRunner,
     quote_path,
 )
-from weathergen.prefect_dags.result import OpError, Result
+from hpc_relay.result import OpError, Result
 
 
 @dataclass

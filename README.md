@@ -25,9 +25,9 @@ This package wraps Prefect's task/flow primitives so that:
 
 The package is split into two independent layers; use whichever fits your stack.
 
-1. **Low-level — `weathergen.prefect_dags.cmd_runners`** — a Prefect-free abstraction over HPC communication. One small protocol (`CommandRunner.run(Command, logger) -> Result[CommandResult]`) and one context dataclass per center (`LocalContext`, `GenericContext`, `EcmwfSshContext`, `EcmwfEcaccessContext`, `CinecaSshContext`, `CscsFirecrestContext`). The async dispatcher `run_cmd(ctx, cmd, logger)` picks the right runner. This is the layer that solves the "how do I run a command on this HPC" problem and depends only on `paramiko` / `httpx` / `pyfirecrest` — no Prefect, no caching, no SLURM logic. Drop it into any orchestration framework, or use it directly from a script. See the contexts table below for the per-HPC matrix.
+1. **Low-level — `hpc_relay.cmd_runners`** — a Prefect-free abstraction over HPC communication. One small protocol (`CommandRunner.run(Command, logger) -> Result[CommandResult]`) and one context dataclass per center (`LocalContext`, `GenericContext`, `EcmwfSshContext`, `EcmwfEcaccessContext`, `CinecaSshContext`, `CscsFirecrestContext`). The async dispatcher `run_cmd(ctx, cmd, logger)` picks the right runner. This is the layer that solves the "how do I run a command on this HPC" problem and depends only on `paramiko` / `httpx` / `pyfirecrest` — no Prefect, no caching, no SLURM logic. Drop it into any orchestration framework, or use it directly from a script. See the contexts table below for the per-HPC matrix.
 
-2. **High-level — `weathergen.prefect_dags`** — Prefect-based Slurm orchestration built on top of layer (1). Adds `@flow` / `@task` decorators, `sbatch` / `sbatch_try` / `sbatch_submit` for SLURM job submission with monitoring, a leased per-HPC `sacct` poller, transactional submission caching, and `rerun_token`-driven resumability. Use this layer when you want resumable multi-job workflows with a UI; use only layer (1) when you just need to talk to an HPC.
+2. **High-level — `hpc_relay`** — Prefect-based Slurm orchestration built on top of layer (1). Adds `@flow` / `@task` decorators, `sbatch` / `sbatch_try` / `sbatch_submit` for SLURM job submission with monitoring, a leased per-HPC `sacct` poller, transactional submission caching, and `rerun_token`-driven resumability. Use this layer when you want resumable multi-job workflows with a UI; use only layer (1) when you just need to talk to an HPC.
 
 The layers are independent in one direction: the Prefect layer imports from `cmd_runners`, but `cmd_runners` knows nothing about Prefect or SLURM. Adding a new HPC means writing one runner + one context in layer (1); the SLURM/Prefect layer picks it up for free.
 
@@ -83,7 +83,7 @@ weathergen-prefect-dags = { path = "../prefect-dags", editable = true }
 
 ## API surface
 
-### Low-level: HPC communication (`weathergen.prefect_dags.cmd_runners`)
+### Low-level: HPC communication (`hpc_relay.cmd_runners`)
 
 Prefect-free. This is the layer to import if you just need to run commands on an HPC from arbitrary Python code.
 
@@ -109,7 +109,7 @@ HPC contexts:
 | `CinecaSshContext(hpc=..., user=...)` | step-ca SSH cert | CINECA Leonardo. |
 | `CscsFirecrestContext(hpc=..., consumer_key_path=..., consumer_secret_path=..., account=...)` | FirecREST v2 (OAuth2) | CSCS santis / clariden / alps. Survives well beyond an SSH session. |
 
-### High-level: Prefect orchestration (`weathergen.prefect_dags`)
+### High-level: Prefect orchestration (`hpc_relay`)
 
 All public symbols importable from the top-level package. Built on the low-level runners above.
 

@@ -1,7 +1,7 @@
-from weathergen.prefect_dags._sbatch import SlurmJobResult, sbatch, sbatch_submit, sbatch_try
-from weathergen.prefect_dags.prefect import flow, get_run_logger, task
-from weathergen.prefect_dags.result import OpError, Result, is_err, unwrap
-from weathergen.prefect_dags.run import run, run_try
+from hpc_relay._sbatch import SlurmJobResult, sbatch, sbatch_submit, sbatch_try
+from hpc_relay.prefect import flow, get_run_logger, task
+from hpc_relay.result import OpError, Result, is_err, unwrap
+from hpc_relay.run import run, run_try
 
 __all__ = [
     "Result",

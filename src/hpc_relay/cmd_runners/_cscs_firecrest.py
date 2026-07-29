@@ -25,13 +25,13 @@ from typing import Literal
 
 import firecrest as f7t
 
-from weathergen.prefect_dags.cmd_runners._types import (
+from hpc_relay.cmd_runners._types import (
     Command,
     CommandResult,
     CommandRunner,
     quote_path,
 )
-from weathergen.prefect_dags.result import OpError, Result
+from hpc_relay.result import OpError, Result
 
 type CscsHpc = Literal["santis", "alps"]
 

@@ -5,7 +5,7 @@ from logging import Logger
 from pathlib import Path
 from typing import Protocol
 
-from weathergen.prefect_dags.result import Result
+from hpc_relay.result import Result
 
 # A leading tilde component: "~" or "~user".
 _TILDE_PREFIX_RE = re.compile(r"~[A-Za-z0-9._-]*")

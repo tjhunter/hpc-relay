@@ -12,8 +12,8 @@
 # # When developing locally, swap the source above for the line below:
 # weathergen-prefect-dags = { path = "../", editable = true }
 # ///
-from weathergen.prefect_dags import flow, run, sbatch
-from weathergen.prefect_dags.cmd_runners import SimpleSshContext
+from hpc_relay import flow, run, sbatch
+from hpc_relay.cmd_runners import SimpleSshContext
 
 # The run context defines where the commands will be executed.
 ctx = SimpleSshContext(

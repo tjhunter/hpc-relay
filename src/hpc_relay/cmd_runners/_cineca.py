@@ -22,7 +22,7 @@ User workflow (manual, follows the official Leonardo guide):
     CinecaSshContext(hpc="leonardo", user="my_cineca_user")
 
 The lower-level reference implementation lives in
-``weathergen.prefect_dags.cineca``.
+``hpc_relay.cineca``.
 """
 
 import shlex
@@ -33,18 +33,18 @@ from typing import Literal
 
 import paramiko
 
-from weathergen.prefect_dags.cmd_runners._generic import (
+from hpc_relay.cmd_runners._generic import (
     ConnectionClosedError,
     _load_private_key,
     is_connection_closed,
 )
-from weathergen.prefect_dags.cmd_runners._types import (
+from hpc_relay.cmd_runners._types import (
     Command,
     CommandResult,
     CommandRunner,
     quote_path,
 )
-from weathergen.prefect_dags.result import OpError, Result
+from hpc_relay.result import OpError, Result
 
 type CinecaHpc = Literal["leonardo"]
 

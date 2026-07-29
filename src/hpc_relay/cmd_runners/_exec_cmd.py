@@ -7,21 +7,21 @@ import functools
 import logging
 from typing import Any
 
-from weathergen.prefect_dags.cmd_runners._cineca import CinecaCommandRunner, CinecaSshContext
-from weathergen.prefect_dags.cmd_runners._cscs_firecrest import (
+from hpc_relay.cmd_runners._cineca import CinecaCommandRunner, CinecaSshContext
+from hpc_relay.cmd_runners._cscs_firecrest import (
     CscsFirecrestCommandRunner,
     CscsFirecrestContext,
 )
-from weathergen.prefect_dags.cmd_runners._ecmwf_ecaccess import (
+from hpc_relay.cmd_runners._ecmwf_ecaccess import (
     EcmwfEcaccessCommandRunner,
     EcmwfEcaccessContext,
 )
-from weathergen.prefect_dags.cmd_runners._generic import GenericContext, GenericSshCommandRunner
-from weathergen.prefect_dags.cmd_runners._jsc import JscUnicoreCommandRunner, JscUnicoreContext
-from weathergen.prefect_dags.cmd_runners._local import LocalCommandRunner, LocalContext
-from weathergen.prefect_dags.cmd_runners._simple import SimpleSshCommandRunner, SimpleSshContext
-from weathergen.prefect_dags.cmd_runners._types import Command, CommandResult, CommandRunner
-from weathergen.prefect_dags.result import OpError, Result, is_err
+from hpc_relay.cmd_runners._generic import GenericContext, GenericSshCommandRunner
+from hpc_relay.cmd_runners._jsc import JscUnicoreCommandRunner, JscUnicoreContext
+from hpc_relay.cmd_runners._local import LocalCommandRunner, LocalContext
+from hpc_relay.cmd_runners._simple import SimpleSshCommandRunner, SimpleSshContext
+from hpc_relay.cmd_runners._types import Command, CommandResult, CommandRunner
+from hpc_relay.result import OpError, Result, is_err
 
 """
 The context contains all the information necessary to run a command

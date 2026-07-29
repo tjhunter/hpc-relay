@@ -16,15 +16,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, cast, get_args
 
-from weathergen.prefect_dags.cmd_runners import (
+from hpc_relay.cmd_runners import (
     CmdContext,
     Command,
     CommandResult,
     run_cmd,
     slurm_account,
 )
-from weathergen.prefect_dags.cmd_runners._types import quote_path
-from weathergen.prefect_dags.result import OpError, Result, is_err
+from hpc_relay.cmd_runners._types import quote_path
+from hpc_relay.result import OpError, Result, is_err
 
 
 class SubmissionError(Exception):
