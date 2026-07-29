@@ -33,6 +33,7 @@ import os
 import re
 import sys
 import time
+from contextlib import suppress
 from datetime import UTC, datetime, timedelta
 from typing import Any, TypedDict
 
@@ -194,10 +195,8 @@ def run_command(
         print(stderr_text)
 
     # Clean up the job on the server
-    try:
+    with suppress(Exception):
         job.delete()
-    except Exception:
-        pass
 
     if status == "FAILED":
         sys.exit(1)

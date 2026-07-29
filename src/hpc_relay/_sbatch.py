@@ -599,7 +599,8 @@ async def wait_completion_single(
             # The Prefect API is unreachable. This is not a problem with the
             # slurm job: keep polling with backoff for a bounded window.
             now = _now_utc()
-            outage_started = outage_started or now
+            if outage_started is None:
+                outage_started = now
             elapsed = (now - outage_started).total_seconds()
             if elapsed > _API_OUTAGE_TOLERANCE_SECS:
                 logger.error(

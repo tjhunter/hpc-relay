@@ -23,7 +23,9 @@ dev = [
  "pytest>=8.3",
  "pytest-mock>=3.14.1",
  "ruff==0.9.7",
- "pyrefly==0.36.0",
+ "pyrefly==1.1",
+ "types-paramiko",
+ "types-requests"
 ]
 
 
@@ -34,11 +36,14 @@ reportMissingTypeStubs = false
 reportWildcardImportFromLibrary = false
 
 [tool.pyrefly]
-project-includes = ["src/"]
-project-excludes = [
-]
+project-includes = ["src/", "scripts/"]
+project-excludes = []
+python-version = "3.12"
+preset = "strict"
+min-severity = "warn"
 
 [tool.pyrefly.errors]
+unannotated-return = true
 # bad-argument-type = true
 # unsupported-operation = false
 # missing-attribute = false

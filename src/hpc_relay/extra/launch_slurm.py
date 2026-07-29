@@ -24,7 +24,7 @@ from hpc_relay.cmd_runners import (
 from hpc_relay.prefect import get_run_logger, task
 from hpc_relay.result import OpError, Result, is_err
 from hpc_relay.run import get_head_tail_logs
-from hpc_relay.slurm import SlurmJobId, SlurmSubmissionResult
+from hpc_relay.slurm import SlurmJobId, SlurmJobState, SlurmSubmissionResult
 
 _logger = logging.getLogger(__name__)
 
@@ -486,7 +486,9 @@ def wait_for_completion(
         logger.info(
             f"Waiting for slurm job {sub.job_id} (run_id={ls.wg_run_id}) on hpc {_runner.hpc}"
         )
-        state = run_coro_as_sync(wait_completion_single(logger, ctx, sub.job_id, _runner))
+        state: Result[SlurmJobState] = run_coro_as_sync(
+            wait_completion_single(logger, ctx, sub.job_id, _runner)
+        )
         if is_err(state):
             return state
         logger.info(f"Slurm job {sub.job_id} (run_id={ls.wg_run_id}) finished: {state}")
