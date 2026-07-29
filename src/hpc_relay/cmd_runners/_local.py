@@ -7,6 +7,7 @@ import subprocess
 from dataclasses import dataclass
 from logging import Logger
 from pathlib import Path
+from typing import override
 
 from hpc_relay.cmd_runners._types import (
     Command,
@@ -31,6 +32,7 @@ class LocalCommandRunner(CommandRunner):
     name = "local"
     hpc = "local"
 
+    @override
     def run(self, cmd: Command, logger: Logger) -> Result[CommandResult]:
         # Merge onto os.environ rather than replacing it: replacing wipes PATH,
         # HOME, etc. and breaks most commands. None inherits the parent env unchanged.

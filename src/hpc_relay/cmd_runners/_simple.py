@@ -14,6 +14,7 @@ import shlex
 import subprocess
 from dataclasses import dataclass
 from logging import Logger
+from typing import override
 
 from hpc_relay.cmd_runners._generic import (
     ConnectionClosedError,
@@ -57,12 +58,13 @@ class SimpleSshCommandRunner(CommandRunner):
     name = "ecmwf_ssh"
     _ctx: SimpleSshContext
 
-    def __init__(self, context: SimpleSshContext):
+    def __init__(self, context: SimpleSshContext) -> None:
         self._ctx = context
         # No separate "hpc" name on ECMWF contexts — the ssh host alias
         # ("hpc-login", "hpc2020", ...) already identifies the cluster.
         self.hpc = context.host
 
+    @override
     def run(self, cmd: Command, logger: Logger) -> Result[CommandResult]:
         # ssh runs a non-login, non-interactive shell on the remote, so
         # working_directory and env_vars from the local Command don't

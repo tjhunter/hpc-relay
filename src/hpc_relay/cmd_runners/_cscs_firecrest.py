@@ -21,7 +21,7 @@ import uuid
 from dataclasses import dataclass
 from logging import Logger
 from pathlib import Path
-from typing import Literal
+from typing import Literal, override
 
 import firecrest as f7t
 
@@ -108,7 +108,7 @@ class _BearerTokenAuth:
     re-issuing one on every request.
     """
 
-    def __init__(self, token: str):
+    def __init__(self, token: str) -> None:
         self._token = token
 
     def get_access_token(self) -> str:
@@ -136,13 +136,14 @@ class CscsFirecrestCommandRunner(CommandRunner):
     # context, so resolve once and cache.
     _resolved_scratch_dir: str | None
 
-    def __init__(self, context: CscsFirecrestContext):
+    def __init__(self, context: CscsFirecrestContext) -> None:
         self._ctx = context
         self.hpc = context.hpc
         self._credential_signature = _credential_signature(context)
         self._client = _build_client(context)
         self._resolved_scratch_dir = context.scratch_dir
 
+    @override
     def run(self, cmd: Command, logger: Logger) -> Result[CommandResult]:
         self._refresh_client_if_credentials_changed(logger)
         try:
@@ -377,7 +378,7 @@ def _build_sbatch_script(
     return "\n".join([*sbatch_lines, "", *body, ""])
 
 
-def _extract_job_id(submit_resp: dict) -> str:
+def _extract_job_id(submit_resp: dict[str, object]) -> str:
     # FirecREST v2 returns {"jobid": <int>} but older / wrapped responses have
     # been seen as {"jobId": ...} or {"job": {"jobid": ...}}. Try all three.
     for key in ("jobid", "jobId"):

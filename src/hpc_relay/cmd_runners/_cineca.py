@@ -29,7 +29,7 @@ import shlex
 from dataclasses import dataclass
 from logging import Logger
 from pathlib import Path
-from typing import Literal
+from typing import Literal, override
 
 import paramiko
 
@@ -99,10 +99,11 @@ class CinecaCommandRunner(CommandRunner):
     name = "cineca_ssh"
     _ctx: CinecaSshContext
 
-    def __init__(self, context: CinecaSshContext):
+    def __init__(self, context: CinecaSshContext) -> None:
         self._ctx = context
         self.hpc = context.hpc
 
+    @override
     def run(self, cmd: Command, logger: Logger) -> Result[CommandResult]:
         try:
             return self._run(cmd, logger)

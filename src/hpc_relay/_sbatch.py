@@ -118,7 +118,7 @@ class SlurmTerminalError(Exception):
 
     result: SlurmJobResult
 
-    def __init__(self, result: SlurmJobResult):
+    def __init__(self, result: SlurmJobResult) -> None:
         super().__init__(
             f"Slurm job {result.job_id} ended with non-successful state: {result.status}"
         )

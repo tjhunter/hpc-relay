@@ -8,6 +8,7 @@ import shlex
 from dataclasses import dataclass
 from logging import Logger
 from pathlib import Path
+from typing import override
 
 import paramiko
 from cryptography.hazmat.primitives.asymmetric import ec, ed25519, rsa
@@ -106,10 +107,11 @@ class GenericSshCommandRunner(CommandRunner):
     name = "generic_ssh"
     _ctx: GenericContext
 
-    def __init__(self, context: GenericContext):
+    def __init__(self, context: GenericContext) -> None:
         self._ctx = context
         self.hpc = context.hpc
 
+    @override
     def run(self, cmd: Command, logger: Logger) -> Result[CommandResult]:
         try:
             return self._run(cmd, logger)

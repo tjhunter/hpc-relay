@@ -271,7 +271,7 @@ def flow(__fn: Any = None, /, **kwargs: Any) -> Any:
     kwargs["flow_run_name"] = make_flow_run_name
     p_flow_decorator = p_flow(**kwargs)
 
-    def wrapper(fn):
+    def wrapper(fn: Callable[_P, _R]) -> Flow[_P, _R]:
         _validate_rerun_token_param(fn)
         sig = inspect.signature(fn)
 
@@ -288,7 +288,7 @@ def flow(__fn: Any = None, /, **kwargs: Any) -> Any:
                 _log_rerun_info(bound.get("rerun_token"))
                 return await fn(*args, **kw)
 
-            return p_flow_decorator(_async_wrapped)
+            return p_flow_decorator(cast(Callable[_P, _R], _async_wrapped))
 
         @functools.wraps(fn)
         def _sync_wrapped(*args: Any, **kw: Any) -> Any:
@@ -296,6 +296,6 @@ def flow(__fn: Any = None, /, **kwargs: Any) -> Any:
             _log_rerun_info(bound.get("rerun_token"))
             return fn(*args, **kw)
 
-        return p_flow_decorator(_sync_wrapped)
+        return p_flow_decorator(cast(Callable[_P, _R], _sync_wrapped))
 
     return wrapper(__fn) if __fn is not None else wrapper

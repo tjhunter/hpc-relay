@@ -33,7 +33,7 @@ class SubmissionError(Exception):
     an extractable Slurm job id.
     """
 
-    def __init__(self, result: CommandResult, message: str | None = None):
+    def __init__(self, result: CommandResult, message: str | None = None) -> None:
         self.result = result
         detail = message or "Could not parse a Slurm job id from sbatch output"
         super().__init__(

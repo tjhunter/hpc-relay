@@ -177,7 +177,7 @@ class ECaccessClient:
         https_host: str = DEFAULT_GATEWAY,
         http_host: str = DEFAULT_GATEWAY,
         debug: bool = False,
-    ):
+    ) -> None:
         self.cert_path = cert_path
         self.https_host = https_host
         self.http_host = http_host

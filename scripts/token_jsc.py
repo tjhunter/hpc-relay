@@ -113,6 +113,7 @@ def create_token(
     # Log what identity the server sees before attempting token issuance
     try:
         props = client.properties
+        # pyrefly: ignore [missing-attribute]
         client_info = props.get("client", {})
         dn = client_info.get("dn", "N/A")
         role = client_info.get("role", {}).get("selected", "N/A")
@@ -163,9 +164,11 @@ def run_command(
     print(f"  Submitting: {command}")
     job = client.new_job(job_description=job_desc)
     print(f"  Job URL:    {job.resource_url}")
+    # pyrefly: ignore [unsupported-operation]
     print(f"  Status:     {job.properties['status']}")
 
     # Poll until finished
+    # pyrefly: ignore [unsupported-operation]
     while job.properties["status"] not in ("SUCCESSFUL", "FAILED", "DONE"):
         time.sleep(poll_interval)
         # Force refresh
@@ -179,6 +182,7 @@ def run_command(
     print("\n--- stdout ---")
     try:
         stdout = wd.stat("/stdout")
+        # pyrefly: ignore [missing-attribute]
         print(stdout.raw().read().decode("utf-8", errors="replace"))
     except Exception:
         print("  (empty or unavailable)")
@@ -186,6 +190,7 @@ def run_command(
     stderr_text = ""
     try:
         stderr_file = wd.stat("/stderr")
+        # pyrefly: ignore [missing-attribute]
         stderr_text = stderr_file.raw().read().decode("utf-8", errors="replace")
     except Exception:
         pass
@@ -498,6 +503,7 @@ Examples:
             credential = uc_credentials.BearerToken(token=token)
             client = uc_client.Client(credential, url)
             props = client.properties
+            # pyrefly: ignore [missing-attribute]
             client_info = props.get("client", {})
             dn: str = client_info.get("dn", "N/A")
             role: str = client_info.get("role", {}).get("selected", "N/A")

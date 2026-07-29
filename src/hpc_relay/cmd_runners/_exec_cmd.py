@@ -5,7 +5,8 @@ Executing commands in an asynchronous way.
 import asyncio
 import functools
 import logging
-from typing import Any
+from collections.abc import Callable
+from typing import Any, ParamSpec, TypeVar
 
 from hpc_relay.cmd_runners._cineca import CinecaCommandRunner, CinecaSshContext
 from hpc_relay.cmd_runners._cscs_firecrest import (
@@ -86,7 +87,13 @@ def get_command_runner(context: CmdContext) -> CommandRunner | Exception:
             return ValueError(f"Unsupported context type: {type(context)}")
 
 
-async def run_blocking(fn, *args, **kwargs):
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+
+
+async def run_blocking(
+    fn: Callable[_P, _R], *args: _P.args, **kwargs: _P.kwargs
+) -> _R:
     """Run a blocking function in the default thread executor."""
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, functools.partial(fn, *args, **kwargs))

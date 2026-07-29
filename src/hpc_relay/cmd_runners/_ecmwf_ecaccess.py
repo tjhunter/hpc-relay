@@ -18,6 +18,7 @@ import time
 from dataclasses import dataclass
 from logging import Logger
 from pathlib import Path
+from typing import override
 
 from hpc_relay.cmd_runners._types import (
     Command,
@@ -71,9 +72,10 @@ class EcmwfEcaccessCommandRunner(CommandRunner):
     hpc = "hpc2020"
     _ctx: EcmwfEcaccessContext
 
-    def __init__(self, context: EcmwfEcaccessContext):
+    def __init__(self, context: EcmwfEcaccessContext) -> None:
         self._ctx = context
 
+    @override
     def run(self, cmd: Command, logger: Logger) -> Result[CommandResult]:
         script = _build_script(cmd)
         cert_path = (

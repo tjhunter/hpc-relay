@@ -22,7 +22,7 @@ import time
 from dataclasses import dataclass
 from logging import Logger
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, override
 
 import pyunicore.client as uc_client
 import pyunicore.credentials as uc_credentials
@@ -64,7 +64,7 @@ _TERMINAL_STATUSES = ("SUCCESSFUL", "FAILED", "DONE")
 _COMMAND_SCRIPT = "wg_command.sh"
 
 
-def discover_sites(credential) -> dict[str, str]:
+def discover_sites(credential: uc_credentials.Credential) -> dict[str, str]:
     """Query the JSC UNICORE registry and return {site_name: base_url}."""
     import requests
 
@@ -122,10 +122,11 @@ class JscUnicoreCommandRunner(CommandRunner):
     name = "jsc_unicore"
     _ctx: JscUnicoreContext
 
-    def __init__(self, context: JscUnicoreContext):
+    def __init__(self, context: JscUnicoreContext) -> None:
         self._ctx = context
         self.hpc = context.hpc
 
+    @override
     def run(self, cmd: Command, logger: Logger) -> Result[CommandResult]:
         try:
             return self._run(cmd, logger)
