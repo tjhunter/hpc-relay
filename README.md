@@ -71,14 +71,14 @@ Sample console output:
 ## Install as a library
 
 ```sh
-uv add "weathergen-prefect-dags @ git+https://github.com/ecmwf/WeatherGenerator.git@tjh/dev/prefect-test#subdirectory=packages/prefect-dags"
+uv add "hpc-relay @ git+https://github.com/tjhunter/hpc-relay.git"
 ```
 
-For local development against a checkout:
+For local development against a sibling checkout:
 
 ```toml
 [tool.uv.sources]
-weathergen-prefect-dags = { path = "../prefect-dags", editable = true }
+hpc-relay = { path = "../hpc-relay", editable = true }
 ```
 
 ## API surface

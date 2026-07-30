@@ -2,15 +2,15 @@
 # /// script
 # requires-python = ">=3.12,<3.13"
 # dependencies = [
-#     "weathergen-prefect-dags",
+#     "hpc-relay",
 # ]
 #
 # [tool.uv.sources]
 # # Directly pull the package from Github.
-# # weathergen-prefect-dags = { git = "https://github.com/ecmwf/WeatherGenerator", branch = "tjh/dev/prefect-test", subdirectory = "packages/prefect-dags" }
+# # hpc-relay = { git = "https://github.com/tjhunter/hpc-relay.git" }
 #
 # # When developing locally, swap the source above for the line below:
-# weathergen-prefect-dags = { path = "../", editable = true }
+# hpc-relay = { path = "../", editable = true }
 # ///
 
 from hpc_relay import SlurmJobResult, flow, run, sbatch_try, task
