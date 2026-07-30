@@ -2,6 +2,8 @@
 
 Run commands and [Slurm](https://slurm.schedmd.com/overview.html) jobs on HPCs from a [Prefect](https://www.prefect.io/) flow. One uniform Python API across EuroHPC and generic SSH/Slurm clusters, with resumable workflows that survive disconnections, shutdowns and transient errors.
 
+`hpc-relay` was created by Tim Hunter for the needs of the [WeatherGenerator](https://github.com/ecmwf/WeatherGenerator) project.
+
 **Status:** alpha (`0.1.0`). API is subject to change.
 
 ## Why this exists
@@ -25,9 +27,9 @@ This package wraps Prefect's task/flow primitives so that:
 
 The package is split into two independent layers; use whichever fits your stack.
 
-1. **Low-level — `hpc_relay.cmd_runners`** — a Prefect-free abstraction over HPC communication. One small protocol (`CommandRunner.run(Command, logger) -> Result[CommandResult]`) and one context dataclass per center (`LocalContext`, `GenericContext`, `EcmwfSshContext`, `EcmwfEcaccessContext`, `CinecaSshContext`, `CscsFirecrestContext`). The async dispatcher `run_cmd(ctx, cmd, logger)` picks the right runner. This is the layer that solves the "how do I run a command on this HPC" problem and depends only on `paramiko` / `httpx` / `pyfirecrest` — no Prefect, no caching, no SLURM logic. Drop it into any orchestration framework, or use it directly from a script. See the contexts table below for the per-HPC matrix.
+1. **High-level — `hpc_relay`** — Prefect-based Slurm/SSH orchestration. Adds `@flow` / `@task` decorators, `sbatch` / `sbatch_try` / `sbatch_submit` for SLURM job submission with monitoring, a centralized poller, transactional submission caching and opt-in resumability. Use this layer when you want resumable multi-job workflows with a UI.
 
-2. **High-level — `hpc_relay`** — Prefect-based Slurm orchestration built on top of layer (1). Adds `@flow` / `@task` decorators, `sbatch` / `sbatch_try` / `sbatch_submit` for SLURM job submission with monitoring, a leased per-HPC `sacct` poller, transactional submission caching, and `rerun_token`-driven resumability. Use this layer when you want resumable multi-job workflows with a UI; use only layer (1) when you just need to talk to an HPC.
+2. **Low-level — `hpc_relay.cmd_runners`** — a Prefect-free abstraction over HPC communication. Use it when you just need to talk to an HPC without orchestration. One small protocol (`CommandRunner.run -> Result[CommandResult]`) and one context dataclass per center and communication protocol (`LocalContext`, `GenericContext`, `EcmwfSshContext`, `CscsFirecrestContext`, ...). This layer solves the "how do I run a command on this HPC" problem and depends only on `paramiko` / `httpx`. Drop it into any orchestration framework, or use it directly from a script. See the contexts table below for the per-HPC matrix.
 
 The layers are independent in one direction: the Prefect layer imports from `cmd_runners`, but `cmd_runners` knows nothing about Prefect or SLURM. Adding a new HPC means writing one runner + one context in layer (1); the SLURM/Prefect layer picks it up for free.
 
@@ -37,15 +39,19 @@ You can try this package without installing anything on your machine.
 
 Prerequisites on your local machine:
 - [uv](https://docs.astral.sh/uv/) ≥ 0.9
-- A passwordless SSH connection to an HPC, e.g. `ssh hpc-login` returns a shell without prompts. 
+- A passwordless SSH connection to an HPC, e.g. `ssh hpc-login` returns a shell without prompts. Most HPC provides temporary passwordless access, see the table below.
+Alternatively (if you run this directly on the HPC), you can directly issue shell command with the `LocalContext`.
 
 **1. Start a local Prefect server**
 
+If you want a UI, run this command.
 Note: you do not need to install Prefect locally, `uv` will handle that.
 
 ```sh
 uvx --with "prefect==3.7.0,fastapi<0.116,starlette<0.42,paramiko>=3.1" prefect server start
 ```
+
+If you do not run the server, the command below will still run but without a UI server.
 
 **2. Run the hello-world flow** ([source](https://github.com/tjhunter/hpc-relay/blob/main/examples/hello_world.py))
 
@@ -53,7 +59,7 @@ uvx --with "prefect==3.7.0,fastapi<0.116,starlette<0.42,paramiko>=3.1" prefect s
 curl -fsSL https://raw.githubusercontent.com/tjhunter/hpc-relay/main/examples/hello_world.py | uv run --script -
 ```
 
-The script connects to `hpc-login` over SSH, runs `echo 'hello world'` directly, then submits the same command as a Slurm job and waits for it to complete. If necessary, edit `working_directory` and the SSH host to match your environment.
+The script connects to `hpc-login` over SSH, runs `echo 'hello world'` directly, then submits the same command as a Slurm job and waits for it to complete. If necessary, edit the SSH host to match your environment.
 
 **3. Open the UI** at <http://127.0.0.1:4200/flows> to see the run, task graph, logs, and the Slurm submission artifact:
 
@@ -81,7 +87,24 @@ For local development against a sibling checkout:
 hpc-relay = { path = "../hpc-relay", editable = true }
 ```
 
-## API surface
+## API
+
+### High-level: Prefect orchestration (`hpc_relay`)
+
+All public symbols importable from the top-level package. Built on the low-level runners above.
+
+| Symbol | What it does |
+| --- | --- |
+| `@flow` | Prefect flow decorator. Requires a `rerun_token: str \| None = None` parameter on the flow function (enforced at decoration time). |
+| `@task` | Prefect task decorator. Cache keys include the `rerun_token`, so reruns replay successful tasks. |
+| `run(ctx, command=...)` | Synchronous command on the HPC. Returns `CommandResult` (stdout/stderr/return_code); raises on transport errors. |
+| `run_try(...)` | Same as `run`, but returns a `Result[CommandResult]` instead of raising. |
+| `sbatch(ctx, job_name=..., command=..., time_limit=..., ...)` | Submit a Slurm job and block until it completes. Raises if the job ends in any non-`COMPLETED` state. |
+| `sbatch_try(...)` | Same as `sbatch`, but returns a `Result[SlurmJobResult]`. |
+| `sbatch_submit(...)` | Submit a Slurm job without waiting. Returns `SlurmSubmissionResult`. |
+| `SlurmJobResult` | `{ job_id, status, submission }` for a completed job. |
+| `get_run_logger()` | Prefect-aware logger inside tasks. |
+
 
 ### Low-level: HPC communication (`hpc_relay.cmd_runners`)
 
@@ -109,21 +132,6 @@ HPC contexts:
 | `CinecaSshContext(hpc=..., user=...)` | step-ca SSH cert | CINECA Leonardo. |
 | `CscsFirecrestContext(hpc=..., consumer_key_path=..., consumer_secret_path=..., account=...)` | FirecREST v2 (OAuth2) | CSCS santis / clariden / alps. Survives well beyond an SSH session. |
 
-### High-level: Prefect orchestration (`hpc_relay`)
-
-All public symbols importable from the top-level package. Built on the low-level runners above.
-
-| Symbol | What it does |
-| --- | --- |
-| `@flow` | Prefect flow decorator. Requires a `rerun_token: str \| None = None` parameter on the flow function (enforced at decoration time). |
-| `@task` | Prefect task decorator. Cache keys include the `rerun_token`, so reruns replay successful tasks. |
-| `run(ctx, command=...)` | Synchronous command on the HPC. Returns `CommandResult` (stdout/stderr/return_code); raises on transport errors. |
-| `run_try(...)` | Same as `run`, but returns a `Result[CommandResult]` instead of raising. |
-| `sbatch(ctx, job_name=..., command=..., time_limit=..., ...)` | Submit a Slurm job and block until it completes. Raises if the job ends in any non-`COMPLETED` state. |
-| `sbatch_try(...)` | Same as `sbatch`, but returns a `Result[SlurmJobResult]`. |
-| `sbatch_submit(...)` | Submit a Slurm job without waiting. Returns `SlurmSubmissionResult`. |
-| `SlurmJobResult` | `{ job_id, status, submission }` for a completed job. |
-| `get_run_logger()` | Prefect-aware logger inside tasks. |
 
 ## Resuming an interrupted flow
 
@@ -213,7 +221,7 @@ and will store it to `~/.jsc_unicore_token`.
 
 - [`examples/hello_world.py`](examples/hello_world.py) — minimal `run` + `sbatch` over SSH.
 - [`examples/test_flow.py`](examples/test_flow.py) — parallel Slurm jobs with `.submit()`, switchable across SSH and FirecREST contexts.
-- [`examples/test_flow_multihpc.py`](examples/test_flow_multihpc.py) — one flow spanning multiple HPCs.
+- [`examples/test_flow_multihpc.py`](examples/test_flow_multihpc.py) — one flow spanning multiple HPCs: this is the most common case of orchestrating a single flow across multiple resources.
 
 ## Non-goals
 
