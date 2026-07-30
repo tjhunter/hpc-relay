@@ -13,10 +13,9 @@
 # weathergen-prefect-dags = { path = "../", editable = true }
 # ///
 
-from weathergen.launch_slurm import launch_slurm, wait_for_completion
-
 from hpc_relay import SlurmJobResult, flow, run, sbatch_try, task
 from hpc_relay.cmd_runners import *  # noqa: F403
+from hpc_relay.extra.launch_slurm import launch_slurm, wait_for_completion
 from hpc_relay.result import is_err
 
 # ctx: CmdContext = LocalContext()
@@ -30,7 +29,7 @@ from hpc_relay.result import is_err
 #     consumer_key_path="~/.ssh/cscs_consumer_key",
 #     consumer_secret_path="~/.ssh/cscs_consumer_secret",
 # )
-ctx = SimpleSshContext( # noqa: F405
+ctx = SimpleSshContext(  # noqa: F405
     host="hpc-login",
 )
 # ctx = EcmwfEcaccessContext(

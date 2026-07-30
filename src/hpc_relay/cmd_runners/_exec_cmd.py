@@ -6,7 +6,7 @@ import asyncio
 import functools
 import logging
 from collections.abc import Callable
-from typing import Any, ParamSpec, TypeVar
+from typing import ParamSpec, TypeVar
 
 from hpc_relay.cmd_runners._cineca import CinecaCommandRunner, CinecaSshContext
 from hpc_relay.cmd_runners._cscs_firecrest import (
@@ -91,16 +91,14 @@ _P = ParamSpec("_P")
 _R = TypeVar("_R")
 
 
-async def run_blocking(
-    fn: Callable[_P, _R], *args: _P.args, **kwargs: _P.kwargs
-) -> _R:
+async def run_blocking(fn: Callable[_P, _R], *args: _P.args, **kwargs: _P.kwargs) -> _R:
     """Run a blocking function in the default thread executor."""
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, functools.partial(fn, *args, **kwargs))
 
 
 async def run_cmd(
-    context: CmdContext, cmd: Command, logger: logging.Logger | Any | None = None
+    context: CmdContext, cmd: Command, logger: logging.Logger | None = None
 ) -> Result[CommandResult]:
     """
     Runs a command on the specified HPC using the provided context.

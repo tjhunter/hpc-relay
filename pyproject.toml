@@ -25,14 +25,18 @@ dev = [
  "ruff==0.9.7",
  "pyrefly==1.1",
  "types-paramiko",
- "types-requests"
+ "types-requests",
+ "basedpyright>=1.39.9",
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--strict-config", "--strict-markers"]
 
 [tool.basedpyright]
-# Do not require third-party/internal packages to ship type stub files.
+include = ["src", "tests"]
+typeCheckingMode = "standard"
 reportMissingTypeStubs = false
-# Allow `from ... import *` (used in example scripts for convenience).
 reportWildcardImportFromLibrary = false
 
 [tool.pyrefly]

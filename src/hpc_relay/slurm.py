@@ -451,8 +451,7 @@ def _parse_job_id(result: CommandResult) -> SlurmJobId | None:
     if not tokens:
         return None
     candidate = tokens[-1]
-    # Slurm job ids are positive integers; array jobs append "_<index>".
-    base = candidate.split("_", 1)[0]
-    if not base.isdigit():
+    # Slurm job ids are positive integers; array jobs append a numeric "_<index>".
+    if re.fullmatch(r"[1-9]\d*(?:_\d+)?", candidate) is None:
         return None
     return candidate

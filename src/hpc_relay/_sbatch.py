@@ -720,7 +720,8 @@ async def _flow_cancellation_guard(
     # 2. Find all the jobs of this flow run on this HPC and mark them as
     # CANCELLING so the sacct refresh loop leaves them alone.
     payloads = await _list_status_payloads(runner.hpc, logger)
-    job_ids = [p.job_id for p in payloads if p.flow_run_id == flow_run_id]
+    flow_run_id_str = str(flow_run_id)
+    job_ids = [p.job_id for p in payloads if p.flow_run_id == flow_run_id_str]
     for jid in job_ids:
         await _set_status(runner.hpc, jid, "CANCELLING")
 

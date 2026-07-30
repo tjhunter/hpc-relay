@@ -12,10 +12,9 @@
 # # When developing locally, swap the source above for the line below:
 # weathergen-prefect-dags = { path = "../", editable = true }
 # ///
-from weathergen.launch_slurm import launch_slurm, wait_for_completion
-
 from hpc_relay import flow, is_err, run
 from hpc_relay.cmd_runners import SimpleSshContext
+from hpc_relay.extra.launch_slurm import launch_slurm, wait_for_completion
 
 # The run context defines where the commands will be executed.
 ctx = SimpleSshContext(

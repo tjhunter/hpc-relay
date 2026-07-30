@@ -826,8 +826,8 @@ def main() -> int:
     cert_path = args.cert or Path(os.environ.get("ECCERT", str(DEFAULT_CERT)))
 
     # Resolve gateway hosts from env (matching ECaccess.pm lines 105-114)
-    https_host = os.environ.get("https_ecaccess", DEFAULT_GATEWAY) # noqa: SIM112
-    http_host = os.environ.get("http_ecaccess", DEFAULT_GATEWAY) # noqa: SIM112
+    https_host = os.environ.get("https_ecaccess", DEFAULT_GATEWAY)  # noqa: SIM112
+    http_host = os.environ.get("http_ecaccess", DEFAULT_GATEWAY)  # noqa: SIM112
 
     client = ECaccessClient(
         cert_path=cert_path,

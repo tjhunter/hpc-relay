@@ -150,6 +150,19 @@ def discover_sites_bearer(token: str) -> SiteMap:
     return discover_sites(uc_credentials.BearerToken(token=token))
 
 
+def _job_status(job: uc_client.Job) -> str:
+    """Return a validated status from PyUNICORE's dynamically typed properties."""
+    properties = job.properties
+    if not isinstance(properties, dict):
+        raise RuntimeError(f"Job {job.job_id} did not return properties")
+
+    status = properties.get("status")
+    if not isinstance(status, str):
+        raise RuntimeError(f"Job {job.job_id} returned an invalid status: {status!r}")
+
+    return status
+
+
 def run_command(
     client: uc_client.Client, command: str, project: str | None, poll_interval: float
 ) -> None:
@@ -163,18 +176,18 @@ def run_command(
 
     print(f"  Submitting: {command}")
     job = client.new_job(job_description=job_desc)
+    if not isinstance(job, uc_client.Job):
+        raise RuntimeError(f"Expected a UNICORE job, got {type(job).__name__}")
     print(f"  Job URL:    {job.resource_url}")
-    # pyrefly: ignore [unsupported-operation]
-    print(f"  Status:     {job.properties['status']}")
 
-    # Poll until finished
-    # pyrefly: ignore [unsupported-operation]
-    while job.properties["status"] not in ("SUCCESSFUL", "FAILED", "DONE"):
+    status = _job_status(job)
+    print(f"  Status:     {status}")
+
+    # Poll until finished; reading properties refreshes the job state.
+    while status not in ("SUCCESSFUL", "FAILED", "DONE"):
         time.sleep(poll_interval)
-        # Force refresh
-        job.properties  # noqa – property access triggers refresh
+        status = _job_status(job)
 
-    status = job.properties["status"]
     print(f"  Final:      {status}")
 
     # Read stdout / stderr from the working directory
