@@ -24,6 +24,9 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Check Python file headers
+        run: uv run python scripts/check_headers.py
+
       - name: Run lint
         run: make lint
 
