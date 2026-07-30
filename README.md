@@ -1,4 +1,4 @@
-# weathergen-prefect-dags
+# hpc-relay
 
 Run commands and [Slurm](https://slurm.schedmd.com/overview.html) jobs on HPCs from a [Prefect](https://www.prefect.io/) flow. One uniform Python API across EuroHPC and generic SSH/Slurm clusters, with resumable workflows that survive disconnections, shutdowns and transient errors.
 
@@ -47,10 +47,10 @@ Note: you do not need to install Prefect locally, `uv` will handle that.
 uvx --with "prefect==3.7.0,fastapi<0.116,starlette<0.42,paramiko>=3.1" prefect server start
 ```
 
-**2. Run the hello-world flow** ([source](https://github.com/ecmwf/WeatherGenerator/blob/tjh/dev/prefect-test/packages/prefect-dags/examples/hello_world.py))
+**2. Run the hello-world flow** ([source](https://github.com/tjhunter/hpc-relay/blob/main/examples/hello_world.py))
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ecmwf/WeatherGenerator/tjh/dev/prefect-test/packages/prefect-dags/examples/hello_world.py | uv run --script -
+curl -fsSL https://raw.githubusercontent.com/tjhunter/hpc-relay/main/examples/hello_world.py | uv run --script -
 ```
 
 The script connects to `hpc-login` over SSH, runs `echo 'hello world'` directly, then submits the same command as a Slurm job and waits for it to complete. If necessary, edit `working_directory` and the SSH host to match your environment.
